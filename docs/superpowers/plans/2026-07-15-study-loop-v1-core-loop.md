@@ -2600,8 +2600,8 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
   - `python3 scripts/validate_question.py CANDIDATE.json [--as-transfer-test] [--course PATH]`
   - `python3 scripts/render_dashboard.py [--course PATH]`
   - `python3 scripts/rebuild.py [--course PATH] [--dry-run]`
-  - `python3 scripts/misconception.py list [--course PATH]`（活跃错因表）
-  - `python3 scripts/evidence.py list --kc K [--course PATH]`
+  - `python3 scripts/misconception.py [--course PATH]`（活跃错因表）
+  - `python3 scripts/evidence.py --kc K [--course PATH]`
   - `cli_common.commit_events(root, events) -> state dict`（加锁 → 逐个 append → derive → 返回 state）；`cli_common.echo_next(state)`；`cli_common.guard(fn)` 装饰器（StudyLoopError → 人话 + exit 1）；`cli_common.resolve_root(path) -> Path`。
 
 - [ ] **Step 1: 写失败测试（子进程冒烟）**
@@ -3372,7 +3372,7 @@ description: 面向大学课程的本地优先持续学习 Agent。当用户说 
 | 学生答错 | 三步归因（错误假设/缺失前提/错因类型）→ `event.py misconception ...` → 按错因选修复策略 → `event.py repair-start/repair-done` → 双轨重测（原题二刷 + 迁移题） | references/misconception-memory.md |
 | 生成迁移题 | 按 agents/question-generator.md 出题 → agents/independent-solver.md 盲解 → agents/adversarial-reviewer.md 审查 → 组装 validation 块 → `validate_question.py cand.json --as-transfer-test` | references/transfer-ladder.md, references/question-validation.md |
 | 复习到期卡 | `fsrs.py due` → 逐卡提问 → `fsrs.py review --card-id .. --rating 1..4`（评分策略见 references/fsrs-policy.md） | references/fsrs-policy.md |
-| 看状态 | `python3 scripts/render_dashboard.py`；错因表 `misconception.py list`；单点证据 `evidence.py list --kc ..` | references/next-best-step.md |
+| 看状态 | `python3 scripts/render_dashboard.py`；错因表 `python3 scripts/misconception.py`；单点证据 `python3 scripts/evidence.py --kc ..` | references/next-best-step.md |
 | 状态可疑/升级后 | 先 `python3 scripts/derive_state.py` 重算；仍可疑再 `python3 scripts/rebuild.py --dry-run` 看差异，确认后去掉 --dry-run | references/architecture.md |
 
 ## 何时派 Subagent

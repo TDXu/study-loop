@@ -31,7 +31,7 @@ description: 面向大学课程的本地优先持续学习 Agent。当用户说 
 | 学生答错 | 三步归因（错误假设/缺失前提/错因类型）→ `event.py misconception ...` → 按错因选修复策略 → `event.py repair-start/repair-done` → 双轨重测（原题二刷 + 迁移题） | references/misconception-memory.md |
 | 生成迁移题 | 按 agents/question-generator.md 出题 → agents/independent-solver.md 盲解 → agents/adversarial-reviewer.md 审查 → 组装 validation 块 → `validate_question.py cand.json --as-transfer-test` | references/transfer-ladder.md, references/question-validation.md |
 | 复习到期卡 | `fsrs.py due` → 逐卡提问 → `fsrs.py review --card-id .. --rating 1..4`（评分策略见 references/fsrs-policy.md） | references/fsrs-policy.md |
-| 看状态 | `python3 scripts/render_dashboard.py`；错因表 `misconception.py list`；单点证据 `evidence.py list --kc ..` | references/next-best-step.md |
+| 看状态 | `python3 scripts/render_dashboard.py`；错因表 `python3 scripts/misconception.py`；单点证据 `python3 scripts/evidence.py --kc ..` | references/next-best-step.md |
 | 状态可疑/升级后 | 先 `python3 scripts/derive_state.py` 重算；仍可疑再 `python3 scripts/rebuild.py --dry-run` 看差异，确认后去掉 --dry-run | references/architecture.md |
 
 ## 何时派 Subagent
