@@ -1,0 +1,46 @@
+# 今日建议
+
+{% if s.next_best_step.action == "rest" -%}
+暂无紧急任务。可以休息，或自由推进新章节。
+{%- else -%}
+**{{ s.next_best_step.action }}**：{{ s.next_best_step.kc_name or "到期复习" }}
+预计：{{ s.next_best_step.estimated_minutes }} 分钟
+
+为什么：
+{% for r in s.next_best_step.reasons -%}
+- {{ r }}
+{% endfor -%}
+{%- endif %}
+
+# 考试
+
+{% if s.exam.date -%}
+日期：{{ s.exam.date }}（剩余 {{ s.exam.days_remaining }} 天）
+{%- else -%}
+未设置考试日期
+{%- endif %}
+准备度：{{ s.readiness.level }}（{{ "%.2f"|format(s.readiness.score) }}）
+
+# 当前风险
+
+{% if risks -%}
+{% for r in risks -%}
+{{ loop.index }}. {{ r }}
+{% endfor -%}
+{%- else -%}
+暂无
+{%- endif %}
+
+# 掌握证据
+
+- Confirmed: {{ s.counts.confirmed }} KC
+- Checked: {{ s.counts.checked }} KC
+- Weak: {{ s.counts.weak }} KC
+- Blocked: {{ s.counts.blocked }} KC
+- Practiced: {{ s.counts.practiced }} / Explained: {{ s.counts.explained }} / Unseen: {{ s.counts.unseen }}
+
+# 到期复习
+
+{{ s.due_cards }} 张卡片到期
+
+_更新于 {{ s.updated_at }}_
