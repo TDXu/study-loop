@@ -1,0 +1,69 @@
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
+
+
+def run(args, cwd, env_home):
+    import os
+    env = dict(os.environ, STUDY_LOOP_HOME=str(env_home))
+    return subprocess.run([sys.executable, *args], cwd=cwd, env=env,
+                          capture_output=True, text=True)
+
+
+def test_cli_full_smoke(tmp_path):
+    home = tmp_path / "home"
+    course_dir = tmp_path / "模电"
+
+    r = run([SCRIPTS / "init_course.py", str(course_dir), "--course-id", "analog",
+             "--name", "模拟电子技术", "--exam-date", "2026-07-25"], tmp_path, home)
+    assert r.returncode == 0, r.stderr
+
+    r = run([SCRIPTS / "event.py", "kc-add", "--kc-id", "feedback_topology",
+             "--name", "反馈组态判断", "--exam-weight", "0.9"], course_dir, home)
+    assert r.returncode == 0, r.stderr
+
+    cand = course_dir / "q.json"
+    cand.write_text(json.dumps({
+        "question_id": "past_2023_q17", "kc_ids": ["feedback_topology"],
+        "source_type": "past_exam", "transfer_level": "T0",
+        "stem": "判断反馈组态", "answer": "A",
+    }, ensure_ascii=False), encoding="utf-8")
+    r = run([SCRIPTS / "validate_question.py", str(cand)], course_dir, home)
+    assert r.returncode == 0, r.stderr
+
+    r = run([SCRIPTS / "event.py", "attempt", "--question-id", "past_2023_q17",
+             "--wrong", "--confidence", "0.9"], course_dir, home)
+    assert r.returncode == 0, r.stderr
+    assert "repair" in r.stdout or "下一步" in r.stdout
+
+    r = run([SCRIPTS / "event.py", "misconception", "--error-id", "err_001",
+             "--kc", "feedback_topology", "--question", "past_2023_q17",
+             "--wrong-assumption", "有反馈连接即电压反馈",
+             "--missing-premise", "必须检查取样方式",
+             "--error-type", "concept_misconception"], course_dir, home)
+    assert r.returncode == 0, r.stderr
+
+    state = json.loads((course_dir / ".study" / "state.json").read_text(encoding="utf-8"))
+    assert state["next_best_step"]["action"] == "repair"
+    assert state["counts"]["weak"] == 1
+
+    r = run([SCRIPTS / "fsrs.py", "create-card", "--card-type", "original_question",
+             "--kc", "feedback_topology", "--question-id", "past_2023_q17"], course_dir, home)
+    assert r.returncode == 0, r.stderr
+    r = run([SCRIPTS / "fsrs.py", "due"], course_dir, home)
+    assert r.returncode == 0 and "card_" in r.stdout
+
+    r = run([SCRIPTS / "rebuild.py", "--dry-run"], course_dir, home)
+    assert r.returncode == 0, r.stderr
+
+    r = run([SCRIPTS / "next_step.py"], course_dir, home)
+    assert r.returncode == 0 and "repair" in r.stdout
+
+
+def test_cli_friendly_error_outside_course(tmp_path):
+    r = run([SCRIPTS / "next_step.py"], tmp_path, tmp_path / "home")
+    assert r.returncode == 1
+    assert "course.yaml" in r.stderr + r.stdout
