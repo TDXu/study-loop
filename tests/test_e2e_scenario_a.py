@@ -55,6 +55,10 @@ def test_full_misconception_loop(course):
                                        "confidence_before": 0.75, "hint_level": 0,
                                        "retest_of_error_id": "err_001"})
 
+    # T0 检查点：单次正确不足以解决错因
+    t0_check = derive(course)
+    assert t0_check["misconceptions"]["err_001"]["repair_status"] == "retest_pending"
+
     # T1 迁移题（过闸门）→ 正确；T2 → 错误
     register_question(course, {
         "question_id": "syn_t1_001", "kc_ids": ["feedback_topology"],
@@ -92,6 +96,10 @@ def test_full_misconception_loop(course):
     # T2 失败 → 错因回到 active、KC weak、推荐继续修复（§42.2 场景 A 结尾）
     assert err["repair_status"] == "active"
     assert "syn_t2_001" in err["transfer_failures"]
+    # 三步归因内容存储检验
+    assert err["wrong_assumption"] == "输出端存在反馈连接即可视为电压反馈"
+    assert err["missing_premise"] == "必须检查反馈网络对输出端的取样方式"
+    assert err["attribution_confidence"] == 0.82
     assert kc["teaching_state"] == "weak"
     assert kc["transfer"]["T1_near"] == 1.0
     assert kc["transfer"]["T2_structural"] == 0.0
@@ -115,6 +123,8 @@ def test_scenario_c_hint_dependence(course):
                                         "stem": "s", "answer": "a"})
     _ev(course, "hint_requested", {"question_id": "q_h", "level": 4})
     _ev(course, "question_attempted", {"question_id": "q_h", "correct": True, "hint_level": 4})
-    assert derive(course)["kc"]["k_hint"]["teaching_state"] == "practiced"
+    state = derive(course)
+    assert state["kc"]["k_hint"]["teaching_state"] == "practiced"
+    assert state["state"]["next_best_step"]["action"] == "drill"
     _ev(course, "question_attempted", {"question_id": "q_h", "correct": True, "hint_level": 0})
     assert derive(course)["kc"]["k_hint"]["teaching_state"] == "checked"
