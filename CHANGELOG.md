@@ -22,6 +22,11 @@
 
 ## [Unreleased]
 
+### 2026-07-20 — `feat` — F3 选择题输出（网页 / PDF 试卷）
+- 新增 `studylib.manifest`（drill manifest 契约）、`studylib.render_html` + `templates/quiz.html.j2`（自包含交互测验页，运行时解析开关）、`studylib.render_paper`（manifest→PDF，支持题目卷/答案解析卷，CID 字体回退免装字体）。
+- 新增 CLI：`scripts/render_quiz_html.py`、`scripts/render_paper.py`；移除 `scripts/md_to_pdf.py`（其能力并入 render_paper）。
+- `requirements` 加 `reportlab>=4.0`。
+
 ### 2026-07-20 — `feat` — F1 KC 中英对照显示
 - 新增 `studylib.display.kc_label`；接入 next_step / dashboard / evidence / misconception 输出，统一 `kc_id（中文名）`。
 - `ioutils` 新增 `read_json`。涉及：`nextstep.py` `dashboard.py` `cli_common.py` `templates/dashboard.md.j2` `scripts/evidence.py` `scripts/misconception.py`。
