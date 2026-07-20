@@ -28,3 +28,16 @@ def test_total_cap_respected():
     picked, short = gather_questions(questions, ["k1", "k2"], per_kc=2, total=2)
     assert len(picked) == 2
     assert short == {}
+
+
+def test_multi_kc_question_not_duplicated():
+    from studylib.drill import gather_questions
+    questions = {
+        "q1": _q("q1", ["k1", "k2"]),
+        "q2": _q("q2", ["k1"]),
+        "q3": _q("q3", ["k2"]),
+    }
+    picked, short = gather_questions(questions, ["k1", "k2"], per_kc=2, total=4)
+    ids = [q["question_id"] for q in picked]
+    assert len(ids) == len(set(ids)), f"duplicate questions: {ids}"
+    assert set(ids) == {"q1", "q2", "q3"}

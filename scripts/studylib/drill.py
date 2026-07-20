@@ -47,15 +47,20 @@ def gather_questions(
             if k in by_kc and len(by_kc[k]) < per_kc:
                 by_kc[k].append(q)
     picked: list[dict] = []
+    seen: set = set()
     i = 0
     while len(picked) < total:
         progressed = False
         for k in kc_ids:
             if i < len(by_kc[k]):
-                picked.append(by_kc[k][i])
                 progressed = True
-                if len(picked) >= total:
-                    break
+                q = by_kc[k][i]
+                qid = q.get("question_id")
+                if qid not in seen:
+                    seen.add(qid)
+                    picked.append(q)
+                    if len(picked) >= total:
+                        break
         if not progressed:
             break
         i += 1
