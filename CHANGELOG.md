@@ -22,6 +22,13 @@
 
 ## [Unreleased]
 
+### 2026-07-20 — `feat` — F2 学习模式引擎 + 一站式 drill 命令
+- 新增 `studylib.drill`：`select_kcs`（考纲加权 / 诊断自适应，seed 确定性）、`gather_questions`（凑题 + 缺口检测）。
+- 新增 CLI `scripts/drill.py`：选题→凑题→manifest→渲染（html/paper/md），打印 KC 标签、缺口、下一步建议。
+- `SKILL.md` 路由表新增「刷题/出题/模拟卷」意图（先问模式/题量/形态再出）。
+
+## [V2.0-rc1] - 2026-07-20
+
 ### 2026-07-20 — `feat` — F3 选择题输出（网页 / PDF 试卷）
 - 新增 `studylib.manifest`（drill manifest 契约）、`studylib.render_html` + `templates/quiz.html.j2`（自包含交互测验页，运行时解析开关）、`studylib.render_paper`（manifest→PDF，支持题目卷/答案解析卷，CID 字体回退免装字体）。
 - 新增 CLI：`scripts/render_quiz_html.py`、`scripts/render_paper.py`；移除 `scripts/md_to_pdf.py`（其能力并入 render_paper）。

@@ -29,6 +29,7 @@ description: 面向大学课程的本地优先持续学习 Agent。当用户说 
 | 新课程 | `python3 scripts/init_course.py <目录> --course-id .. --name .. --exam-date ..`，然后逐个 `event.py kc-add` 注册骨架（考纲优先），`event.py source-add` 登记来源 | references/provenance.md |
 | 讲解教学 | 当帧教学；讲完 `event.py kc-explained --kc-id ..` | references/evidence-graph.md |
 | 做题/刷题 | 出示题目 → 先问置信度（猜的/不太确定/比较确定/非常确定 → 0.25/0.5/0.75/1.0）→ 学生作答 → `event.py attempt --question-id .. --correct|--wrong --confidence .. [--hint-level ..] [--transfer] [--retest-of ..]` | references/hint-ladder.md |
+| 刷题/出题/模拟卷 | 先问学生三件事：①模式（考纲直出 / 诊断先行）②题量（5/10/自定义）③形态（网页可点击 / PDF 试卷）→ `drill.py --mode .. --count .. --format ..`。网页版默认开启「点击即显示解析」，学生可在页面内随时关。 | references/（见 specs/2026-07-20-...） |
 | 学生答错 | 三步归因（错误假设/缺失前提/错因类型）→ `event.py misconception ...` → 按错因选修复策略 → `event.py repair-start/repair-done` → 双轨重测（原题二刷 + 迁移题） | references/misconception-memory.md |
 | 生成迁移题 | 按 agents/question-generator.md 出题 → agents/independent-solver.md 盲解 → agents/adversarial-reviewer.md 审查 → 组装 validation 块 → `validate_question.py cand.json --as-transfer-test` | references/transfer-ladder.md, references/question-validation.md |
 | 复习到期卡 | `fsrs.py due` → 逐卡提问 → `fsrs.py review --card-id .. --rating 1..4`（评分策略见 references/fsrs-policy.md） | references/fsrs-policy.md |

@@ -118,3 +118,26 @@ def test_render_quiz_html_cli(tmp_path):
     assert r.returncode == 0, r.stderr
     text = out.read_text(encoding="utf-8")
     assert "id=\"revealToggle\"" in text and "模拟电子技术" in text
+
+
+def test_drill_cli_produces_html(tmp_path):
+    home = tmp_path / "home"
+    course_dir = tmp_path / "模电"
+    assert run([SCRIPTS / "init_course.py", str(course_dir), "--course-id", "analog",
+                "--name", "模拟电子技术"], tmp_path, home).returncode == 0
+    assert run([SCRIPTS / "event.py", "kc-add", "--kc-id", "feedback_topology",
+                "--name", "反馈组态判断", "--exam-weight", "0.9"], course_dir, home).returncode == 0
+    # register two MCQs
+    for qid, ans in (("q1", "A"), ("q2", "B")):
+        (course_dir / f"{qid}.json").write_text(json.dumps({
+            "question_id": qid, "kc_ids": ["feedback_topology"], "source_type": "past_exam",
+            "transfer_level": "T0", "stem": f"题 {qid}\nA.x\nB.y", "answer": ans,
+        }, ensure_ascii=False), encoding="utf-8")
+        assert run([SCRIPTS / "validate_question.py", str(course_dir / f"{qid}.json")],
+                   course_dir, home).returncode == 0
+    out_html = course_dir / "drill.html"
+    r = run([SCRIPTS / "drill.py", "--mode", "syllabus", "--count", "2", "--format", "html",
+             "--out", str(out_html), "--seed", "1"], course_dir, home)
+    assert r.returncode == 0, r.stderr
+    assert "feedback_topology（反馈组态判断）" in r.stdout  # summary uses labels
+    assert out_html.exists() and "id=\"revealToggle\"" in out_html.read_text(encoding="utf-8")
