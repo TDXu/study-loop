@@ -32,11 +32,11 @@ def parse_options(stem: str) -> tuple[str, list[tuple[str, str]]]:
 def _question_for_render(q: dict) -> dict:
     body, opts = parse_options(q.get("stem", ""))
     ans = q.get("answer", "") or ""
-    letters = sorted({ch for ch in ans if ch.strip()})
+    letters = sorted({unicodedata.normalize("NFKC", ch).upper() for ch in ans if ch.strip()})
     return {
         "stem": body,
         "options": [{"letter": l, "text": t} for l, t in opts],
-        "answer": ans,
+        "answer": "".join(letters),
         "answer_letters": letters,
         "multi": len(letters) > 1,
         "solution": q.get("solution", ""),

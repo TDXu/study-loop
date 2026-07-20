@@ -53,3 +53,17 @@ def test_render_html_reveal_default_off_not_checked():
     # toggle OFF -> the toggle input must NOT carry 'checked'
     toggle_line = html.split('id="revealToggle"', 1)[1].split(">", 1)[0]
     assert "checked" not in toggle_line
+
+
+def test_lowercase_answer_normalized_for_grading():
+    # options normalized to uppercase; answer must match that normalization
+    m = {
+        "meta": {"course_name": "C", "mode": "syllabus", "count": 1,
+                 "generated_at": "2026-07-20T00:00:00+08:00"},
+        "questions": [{"kc_labels": ["k（名）"], "stem": "Q\nA.x\nB.y\nC.z",
+                       "answer": "abc", "solution": "s"}],
+    }
+    html = render_quiz_html(m, reveal_default=True)
+    # grading attribute uses uppercase; displayed answer is uppercase too
+    assert 'data-answer="A,B,C"' in html
+    assert "答案：<b>ABC</b>" in html
