@@ -1,7 +1,5 @@
 import pytest
 
-from studylib.nextstep import WEAKNESS_SCORE
-
 
 def _kc(state, weight=0.5):
     return {"kc_id": state, "name": state, "teaching_state": state, "exam_weight": weight,
@@ -34,12 +32,17 @@ def test_unknown_mode_raises():
         select_kcs({"a": _kc("unseen")}, "bogus", 1)
 
 
-def test_diagnostic_prefers_weak_when_record_exists():
+def test_diagnostic_prefers_weak_in_distribution():
+    # ES gives higher probability to higher weights, not certainty. Sample many
+    # seeds and assert the frequency ordering the weights imply.
+    from collections import Counter
     from studylib.drill import select_kcs
     kcs = {"weak": _kc("weak"), "conf": _kc("confirmed"), "unseen": _kc("unseen")}
-    # weak has the highest weakness weight; with count covering all, weak is always in
-    chosen = select_kcs(kcs, "diagnostic", 1, seed=0)
-    assert chosen == ["weak"]
+    picks = Counter(select_kcs(kcs, "diagnostic", 1, seed=s)[0] for s in range(400))
+    # weak (weight 1.0) selected most; unseen (0.4) next; confirmed (0.0) ~never
+    assert picks["weak"] > picks["unseen"] > picks.get("confirmed", 0)
+    # weak should win a clear majority (theoretical ~71%); >50% with large margin
+    assert picks["weak"] > 200
 
 
 def test_diagnostic_falls_back_when_all_unseen():
