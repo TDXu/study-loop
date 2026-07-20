@@ -3,7 +3,7 @@
 {% if s.next_best_step.action == "rest" -%}
 暂无紧急任务。可以休息，或自由推进新章节。
 {%- else -%}
-**{{ s.next_best_step.action }}**：{{ s.next_best_step.kc_name or "到期复习" }}
+**{{ s.next_best_step.action }}**：{{ s.next_best_step.kc_label or s.next_best_step.kc_name or "到期复习" }}
 预计：{{ s.next_best_step.estimated_minutes }} 分钟
 
 为什么：
