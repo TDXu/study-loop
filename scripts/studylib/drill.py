@@ -35,3 +35,29 @@ def select_kcs(kc_states: dict[str, dict], mode: str, count: int, seed: int = 0)
         else:
             weights = [kc_states[i].get("exam_weight", 0.5) for i in ids]
     return _weighted_sample_no_replace(rng, ids, weights, min(count, len(ids)))
+
+
+def gather_questions(
+    questions: dict, kc_ids: list[str], per_kc: int = 2, total: int | None = None
+) -> tuple[list[dict], dict[str, int]]:
+    total = total if total is not None else per_kc * max(1, len(kc_ids))
+    by_kc: dict[str, list[dict]] = {k: [] for k in kc_ids}
+    for q in questions.values():
+        for k in q.get("kc_ids", []):
+            if k in by_kc and len(by_kc[k]) < per_kc:
+                by_kc[k].append(q)
+    picked: list[dict] = []
+    i = 0
+    while len(picked) < total:
+        progressed = False
+        for k in kc_ids:
+            if i < len(by_kc[k]):
+                picked.append(by_kc[k][i])
+                progressed = True
+                if len(picked) >= total:
+                    break
+        if not progressed:
+            break
+        i += 1
+    shortfall = {k: per_kc - len(by_kc[k]) for k in kc_ids if len(by_kc[k]) < per_kc}
+    return picked, shortfall
