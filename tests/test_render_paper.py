@@ -26,3 +26,4 @@ def test_markdown_to_pdf_produces_file(tmp_path):
     pdf = tmp_path / "out.pdf"
     markdown_to_pdf(md, pdf, fonts_dir=None)  # CID fallback, no font files needed
     assert pdf.exists() and pdf.stat().st_size > 0
+    assert pdf.read_bytes()[:5] == b"%PDF-"

@@ -23,6 +23,8 @@ NEXT_STEP_HINT = {
     "diagnostic": "据作答结果，对命中的弱知识点针对性出题 / 修复错因。",
 }
 
+SELECT_LABEL = {"syllabus": "按考纲权重", "diagnostic": "按弱点（自适应）"}
+
 
 @app.command()
 @guard
@@ -73,7 +75,7 @@ def main(
         typer.echo(f"已生成 Markdown：{md_path}")
     atomic_write_json(out.with_suffix(".manifest.json"), manifest)
 
-    typer.echo("\n选题（按权重）：")
+    typer.echo(f"\n选题（{SELECT_LABEL[mode]}）：")
     for kc_id in selected:
         typer.echo(f"  - {kc_label(kc_id, kc_states)}")
     typer.echo(f"实际凑题：{len(picked)} 题（目标 {count}）。")

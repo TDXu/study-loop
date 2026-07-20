@@ -4,7 +4,7 @@ import re
 import unicodedata
 from pathlib import Path
 
-from jinja2 import Template
+from jinja2 import Environment
 
 TEMPLATE_PATH = Path(__file__).resolve().parents[2] / "templates" / "quiz.html.j2"
 
@@ -45,7 +45,7 @@ def _question_for_render(q: dict) -> dict:
 
 
 def render_quiz_html(manifest: dict, reveal_default: bool = True) -> str:
-    tpl = Template(TEMPLATE_PATH.read_text(encoding="utf-8"))
+    tpl = Environment(autoescape=True).from_string(TEMPLATE_PATH.read_text(encoding="utf-8"))
     view = {
         "meta": manifest["meta"],
         "questions": [_question_for_render(q) for q in manifest["questions"]],

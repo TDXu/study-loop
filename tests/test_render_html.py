@@ -67,3 +67,30 @@ def test_lowercase_answer_normalized_for_grading():
     # grading attribute uses uppercase; displayed answer is uppercase too
     assert 'data-answer="A,B,C"' in html
     assert "答案：<b>ABC</b>" in html
+
+
+def test_user_text_is_html_escaped():
+    m = {
+        "meta": {"course_name": "C", "mode": "syllabus", "count": 1,
+                 "generated_at": "2026-07-20T00:00:00+08:00"},
+        "questions": [{"kc_labels": ["k（名）"], "stem": "若 a < b 且 b > c\nA.x\nB.y",
+                       "answer": "A", "solution": "解析：a & b 的关系"}],
+    }
+    html = render_quiz_html(m, reveal_default=True)
+    assert "&lt;" in html and "&gt;" in html and "&amp;" in html
+    # literal user substring must NOT appear unescaped anywhere in the output
+    assert "a < b" not in html
+    assert "a &lt; b" in html
+
+
+def test_two_questions_have_distinct_radio_groups():
+    m = {
+        "meta": {"course_name": "C", "mode": "syllabus", "count": 2,
+                 "generated_at": "2026-07-20T00:00:00+08:00"},
+        "questions": [
+            {"kc_labels": [], "stem": "Q1\nA.x\nB.y", "answer": "A", "solution": ""},
+            {"kc_labels": [], "stem": "Q2\nA.x\nB.y", "answer": "B", "solution": ""},
+        ],
+    }
+    html = render_quiz_html(m, reveal_default=False)
+    assert 'name="q1"' in html and 'name="q2"' in html

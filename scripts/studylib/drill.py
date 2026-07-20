@@ -13,7 +13,7 @@ def _weighted_sample_no_replace(
     # Efraimidis–Spirakis: key = u**(1/w); take the k largest keys.
     pairs = []
     for it, w in zip(items, weights):
-        ww = w if w and w > 0 else 1e-9
+        ww = w if w > 0 else 1e-9
         pairs.append((rng.random() ** (1.0 / ww), it))
     pairs.sort(key=lambda p: p[0], reverse=True)
     return [it for _, it in pairs[:k]]
@@ -28,7 +28,7 @@ def select_kcs(kc_states: dict[str, dict], mode: str, count: int, seed: int = 0)
     rng = random.Random(seed)
     if mode == "syllabus":
         weights = [kc_states[i].get("exam_weight", 0.5) for i in ids]
-    else:  # diagnostic, adaptive
+    else:  # diagnostic (adaptive: prefers weak KCs when any learning record exists)
         has_record = any(kc_states[i].get("teaching_state") != "unseen" for i in ids)
         if has_record:
             weights = [WEAKNESS_SCORE.get(kc_states[i].get("teaching_state"), 0.0) for i in ids]
