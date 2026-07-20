@@ -98,3 +98,23 @@ def test_evidence_and_misconception_show_labels(tmp_path):
     r = run([SCRIPTS / "misconception.py"], course_dir, home)
     assert r.returncode == 0, r.stderr
     assert "feedback_topology（反馈组态判断）" in r.stdout
+
+
+def test_render_quiz_html_cli(tmp_path):
+    home = tmp_path / "home"
+    course_dir = tmp_path / "模电"
+    assert run([SCRIPTS / "init_course.py", str(course_dir), "--course-id", "analog",
+                "--name", "模拟电子技术"], tmp_path, home).returncode == 0
+    manifest = course_dir / "m.json"
+    manifest.write_text(json.dumps({
+        "meta": {"course_id": "analog", "course_name": "模拟电子技术", "mode": "syllabus",
+                 "count": 1, "generated_at": "2026-07-20T00:00:00+08:00"},
+        "questions": [{"question_id": "q1", "kc_labels": ["k（名）"],
+                       "stem": "Q\nA.x\nB.y", "answer": "A", "solution": "s"}],
+    }, ensure_ascii=False), encoding="utf-8")
+    out = course_dir / "quiz.html"
+    r = run([SCRIPTS / "render_quiz_html.py", "--manifest", str(manifest),
+             "--out", str(out), "--reveal-default", "on"], course_dir, home)
+    assert r.returncode == 0, r.stderr
+    text = out.read_text(encoding="utf-8")
+    assert "id=\"revealToggle\"" in text and "模拟电子技术" in text
