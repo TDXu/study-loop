@@ -7,7 +7,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import typer
 
 from studylib.cli_common import guard, resolve_root
-from studylib.ioutils import read_jsonl
+from studylib.display import kc_label
+from studylib.ioutils import read_json, read_jsonl
 
 app = typer.Typer(add_completion=False)
 
@@ -19,10 +20,12 @@ def list_cmd(
     course: Path = typer.Option(None, "--course"),
 ):
     root = resolve_root(course)
+    kcs = read_json(root / ".study" / "kc.json")
     rows = [r for r in read_jsonl(root / ".study" / "evidence.jsonl") if kc in r["kc_ids"]]
     if not rows:
-        typer.echo(f"KC {kc} 暂无证据")
+        typer.echo(f"{kc_label(kc, kcs)} 暂无证据")
         return
+    typer.echo(f"{kc_label(kc, kcs)}（共 {len(rows)} 条证据）")
     for r in rows:
         mark = "✓" if r["result"]["correct"] else "✗"
         conf = r.get("confidence_before")

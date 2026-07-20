@@ -7,7 +7,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import typer
 
 from studylib.cli_common import guard, resolve_root
-from studylib.ioutils import read_jsonl
+from studylib.display import kc_label
+from studylib.ioutils import read_json, read_jsonl
 
 app = typer.Typer(add_completion=False)
 
@@ -21,9 +22,11 @@ def list_cmd(course: Path = typer.Option(None, "--course")):
     if not active:
         typer.echo("没有活跃错因")
         return
+    kcs = read_json(root / ".study" / "kc.json")
     for m in active:
+        kc_disp = " / ".join(kc_label(k, kcs) for k in m["kc_ids"])
         typer.echo(f"{m['error_id']}  [{m['repair_status']}]  {m['error_type']}  "
-                   f"kc={','.join(m['kc_ids'])}  ×{m.get('recurrence_count', 1)}")
+                   f"kc={kc_disp}  ×{m.get('recurrence_count', 1)}")
         typer.echo(f"    错误假设：{m.get('wrong_assumption', '')}")
 
 

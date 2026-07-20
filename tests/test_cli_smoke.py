@@ -67,3 +67,34 @@ def test_cli_friendly_error_outside_course(tmp_path):
     r = run([SCRIPTS / "next_step.py"], tmp_path, tmp_path / "home")
     assert r.returncode == 1
     assert "course.yaml" in r.stderr + r.stdout
+
+
+def test_evidence_and_misconception_show_labels(tmp_path):
+    home = tmp_path / "home"
+    course_dir = tmp_path / "模电"
+    r = run([SCRIPTS / "init_course.py", str(course_dir), "--course-id", "analog",
+             "--name", "模拟电子技术"], tmp_path, home)
+    assert r.returncode == 0, r.stderr
+    r = run([SCRIPTS / "event.py", "kc-add", "--kc-id", "feedback_topology",
+             "--name", "反馈组态判断", "--exam-weight", "0.9"], course_dir, home)
+    assert r.returncode == 0, r.stderr
+    cand = course_dir / "q.json"
+    cand.write_text(json.dumps({
+        "question_id": "q1", "kc_ids": ["feedback_topology"], "source_type": "past_exam",
+        "transfer_level": "T0", "stem": "判断反馈组态", "answer": "A",
+    }, ensure_ascii=False), encoding="utf-8")
+    assert run([SCRIPTS / "validate_question.py", str(cand)], course_dir, home).returncode == 0
+    assert run([SCRIPTS / "event.py", "attempt", "--question-id", "q1",
+                "--wrong", "--confidence", "0.9"], course_dir, home).returncode == 0
+    assert run([SCRIPTS / "event.py", "misconception", "--error-id", "err_001",
+                "--kc", "feedback_topology", "--question", "q1",
+                "--wrong-assumption", "x", "--missing-premise", "y",
+                "--error-type", "concept_misconception"], course_dir, home).returncode == 0
+
+    r = run([SCRIPTS / "evidence.py", "--kc", "feedback_topology"], course_dir, home)
+    assert r.returncode == 0, r.stderr
+    assert "feedback_topology（反馈组态判断）" in r.stdout
+
+    r = run([SCRIPTS / "misconception.py"], course_dir, home)
+    assert r.returncode == 0, r.stderr
+    assert "feedback_topology（反馈组态判断）" in r.stdout

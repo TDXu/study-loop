@@ -53,3 +53,15 @@ def test_course_lock_timeout(tmp_path):
                 pass
     finally:
         outer.release()
+
+
+def test_read_json_roundtrip(tmp_path):
+    from studylib.ioutils import atomic_write_json, read_json
+    p = tmp_path / "x.json"
+    atomic_write_json(p, {"a": 1, "中文": "好"})
+    assert read_json(p) == {"a": 1, "中文": "好"}
+
+
+def test_read_json_missing_returns_empty(tmp_path):
+    from studylib.ioutils import read_json
+    assert read_json(tmp_path / "nope.json") == {}

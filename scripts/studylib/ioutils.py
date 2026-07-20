@@ -55,6 +55,13 @@ def read_jsonl(path: Path) -> list[dict]:
     return rows
 
 
+def read_json(path: Path) -> dict:
+    path = Path(path)
+    if not path.exists():
+        return {}
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
 class _CourseLock:
     """Non-reentrant course-level lock; raises StateLockTimeout on timeout."""
 

@@ -22,6 +22,10 @@
 
 ## [Unreleased]
 
+### 2026-07-20 — `feat` — F1 KC 中英对照显示
+- 新增 `studylib.display.kc_label`；接入 next_step / dashboard / evidence / misconception 输出，统一 `kc_id（中文名）`。
+- `ioutils` 新增 `read_json`。涉及：`nextstep.py` `dashboard.py` `cli_common.py` `templates/dashboard.md.j2` `scripts/evidence.py` `scripts/misconception.py`。
+
 ### 2026-07-20 — `chore` — 建立版本控制与变更纪律基线
 
 - 将本地 git 纳入「每次修改可追踪」的工作流：新增本文件 `CHANGELOG.md` 与 `CLAUDE.md`。
