@@ -5,3 +5,7 @@ __pycache__/
 .venv/
 .DS_Store
 .superpowers/
+
+# Scratch / working output: OCR pngs, fonts, candidate-question JSON dumps.
+# These are regenerable artifacts, not source — keep them out of git history.
+tmp/
