@@ -4,17 +4,20 @@ from pathlib import Path
 
 from jinja2 import Template
 
+from .display import kc_label
+
 TEMPLATE_PATH = Path(__file__).resolve().parents[2] / "templates" / "dashboard.md.j2"
 
 
 def build_risks(kc_states: dict, miscs: dict, due: list) -> list[str]:
     risks: list[str] = []
     for kc in kc_states.values():
+        label = kc_label(kc.get("kc_id", ""), kc_states)
         gap = kc["calibration"].get("gap")
         if kc["teaching_state"] == "weak" and gap is not None and gap >= 0.3:
-            risks.append(f"「{kc['name']}」：高置信度盲区")
+            risks.append(f"{label}：高置信度盲区")
         elif kc["teaching_state"] == "blocked":
-            risks.append(f"「{kc['name']}」：前置未稳定")
+            risks.append(f"{label}：前置未稳定")
     for m in miscs.values():
         if m["repair_status"] != "resolved" and m.get("recurrence_count", 1) >= 2:
             risks.append(f"错因复发：{m['error_type']}（×{m['recurrence_count']}）")

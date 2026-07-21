@@ -17,6 +17,10 @@ def _kc_state(kc_id, state, *, weight=0.5, blind=0.0, t1=None, t2=None,
     }
 
 
+def _patch_name(kc_states, kc_id, name):
+    kc_states[kc_id]["name"] = name
+
+
 def test_repair_beats_confirmed():
     from studylib.nextstep import compute_next_best_step
     kc_states = {
@@ -60,3 +64,12 @@ def test_advance_for_unseen():
     rec = compute_next_best_step(COURSE, {"u": _kc_state("u", "unseen")}, {}, [])
     assert rec["action"] == "advance"
     assert rec["kc_id"] == "u"
+
+
+def test_next_step_emits_kc_label():
+    from studylib.nextstep import compute_next_best_step
+    kc_states = {"u": _kc_state("u", "unseen")}
+    _patch_name(kc_states, "u", "未知点")
+    rec = compute_next_best_step(COURSE, kc_states, {}, [])
+    assert rec["kc_label"] == "u（未知点）"
+    assert rec["kc_name"] == "未知点"  # back-compat retained

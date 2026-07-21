@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from datetime import date
 
+from .display import kc_label
+
 DEFAULT_WEIGHTS = {
     "exam_weight": 1.0, "urgency": 1.0, "weakness": 1.5, "prereq_centrality": 0.8,
     "forgetting_risk": 1.0, "transfer_gap": 0.8, "blind_spot": 1.2, "expected_time": 0.5,
@@ -110,7 +112,9 @@ def compute_next_best_step(
             reasons.append(f"距考试 {days} 天")
 
         candidates.append({
-            "action": action, "kc_id": kc_id, "kc_name": kc.get("name", kc_id),
+            "action": action, "kc_id": kc_id,
+            "kc_name": kc.get("name", kc_id),
+            "kc_label": kc_label(kc_id, kc_states),
             "estimated_minutes": minutes, "priority_score": round(score, 4),
             "reasons": reasons,
         })

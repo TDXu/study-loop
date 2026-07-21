@@ -29,7 +29,7 @@ def echo_next(state: dict) -> None:
     if nbs["action"] == "rest":
         typer.echo(f"下一步建议：rest —— {nbs['reasons'][0]}")
         return
-    target = nbs.get("kc_name") or "到期复习"
+    target = nbs.get("kc_label") or nbs.get("kc_name") or "到期复习"
     typer.echo(f"下一步建议：{nbs['action']}「{target}」（约 {nbs['estimated_minutes']} 分钟）")
     typer.echo("原因：")
     for r in nbs["reasons"]:

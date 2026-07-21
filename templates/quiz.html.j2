@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>{{ m.meta.course_name }} · 练习</title>
+<style>
+  :root { --ok:#1a7f37; --bad:#cf222e; --muted:#6e7781; --line:#d0d7de; --bg:#f6f8fa; }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+         max-width: 820px; margin: 0 auto; padding: 24px 16px 80px; color:#1f2328; line-height:1.7; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  .meta { color: var(--muted); font-size: 13px; margin-bottom: 16px; }
+  .toolbar { position: sticky; top: 0; background: var(--bg); border:1px solid var(--line);
+             border-radius: 8px; padding: 10px 14px; margin-bottom: 20px; display:flex;
+             align-items:center; gap:12px; flex-wrap:wrap; }
+  .toolbar label.txt { font-size: 14px; cursor:pointer; }
+  .switch { position:relative; width:44px; height:24px; flex:0 0 auto; }
+  .switch input { opacity:0; width:0; height:0; }
+  .slider { position:absolute; inset:0; background:#8c959f; border-radius:24px; transition:.2s; }
+  .slider:before { content:""; position:absolute; width:18px; height:18px; left:3px; top:3px;
+                   background:#fff; border-radius:50%; transition:.2s; }
+  .switch input:checked + .slider { background: var(--ok); }
+  .switch input:checked + .slider:before { transform: translateX(20px); }
+  button.grade { margin-left:auto; padding:6px 14px; border:1px solid var(--line); background:#fff;
+                 border-radius:6px; cursor:pointer; font-size:14px; }
+  button.grade:hover { background: var(--bg); }
+  .score { font-size: 14px; }
+  .q { border:1px solid var(--line); border-radius:10px; padding:14px 16px; margin-bottom:14px; }
+  .q .kcs { color: var(--muted); font-size:12px; margin-bottom:6px; }
+  .q .stem { margin: 0 0 10px; white-space: pre-wrap; }
+  .opts { display:flex; flex-direction:column; gap:6px; }
+  .opt { display:flex; gap:8px; align-items:flex-start; padding:8px 10px; border:1px solid transparent;
+         border-radius:6px; cursor:pointer; }
+  .opt:hover { background: var(--bg); }
+  .opt.locked { cursor: default; }
+  .opt.correct { background:#dafbe1; border-color:var(--ok); }
+  .opt.chosen-wrong { background:#ffebe9; border-color:var(--bad); }
+  .reveal { margin-top:8px; padding:10px 12px; background:var(--bg); border-radius:6px;
+            font-size:14px; display:none; }
+  .reveal.show { display:block; }
+  .reveal .ok { color: var(--ok); font-weight:600; }
+  .reveal .bad { color: var(--bad); font-weight:600; }
+</style>
+</head>
+<body>
+<h1>{{ m.meta.course_name }} · 练习卷</h1>
+<div class="meta">{{ m.meta.mode }} 模式 · {{ m.questions | count }} 题 · 生成于 {{ m.meta.generated_at }}</div>
+
+<div class="toolbar">
+  <span class="switch">
+    <input type="checkbox" id="revealToggle" {% if reveal_default == "on" %}checked{% endif %}>
+    <span class="slider"></span>
+  </span>
+  <label class="txt" for="revealToggle">即时显示答案与解析（开：点选项即出；关：做完点右侧统一对答案）</label>
+  <button class="grade" id="gradeBtn" type="button">提交对答案</button>
+  <span class="score" id="score"></span>
+</div>
+
+{% for q in m.questions %}
+{% set qnum = loop.index %}
+<section class="q" data-q="{{ qnum }}" data-answer="{{ q.answer_letters | join(',') }}" data-multi="{{ q.multi | lower }}">
+  <div class="kcs">{% for l in q.kc_labels %}<span>{{ l }}</span>{% if not loop.last %} · {% endif %}{% endfor %}</div>
+  <div class="stem">{{ qnum }}. {{ q.stem }}</div>
+  <div class="opts">
+    {% for o in q.options %}
+    <label class="opt" data-letter="{{ o.letter }}">
+      <input type="{{ 'checkbox' if q.multi else 'radio' }}" name="q{{ qnum }}" value="{{ o.letter }}">
+      <span><b>{{ o.letter }}.</b> {{ o.text }}</span>
+    </label>
+    {% endfor %}
+  </div>
+  <div class="reveal" data-reveal>
+    <div>答案：<b>{{ q.answer }}</b> <span class="judge"></span></div>
+    <div>{{ q.solution }}</div>
+  </div>
+</section>
+{% endfor %}
+
+<script>
+(function () {
+  var toggle = document.getElementById('revealToggle');
+  var gradeBtn = document.getElementById('gradeBtn');
+  var scoreEl = document.getElementById('score');
+
+  function chosen(sec) {
+    return Array.prototype.map.call(sec.querySelectorAll('.opt input:checked'), function (i) { return i.value; });
+  }
+  function gradeQuestion(sec) {
+    var answer = sec.getAttribute('data-answer').split(',').filter(Boolean);
+    var ch = chosen(sec);
+    sec.querySelectorAll('.opt').forEach(function (o) {
+      var L = o.getAttribute('data-letter');
+      o.classList.remove('correct', 'chosen-wrong');
+      if (answer.indexOf(L) !== -1) o.classList.add('correct');
+      else if (ch.indexOf(L) !== -1) o.classList.add('chosen-wrong');
+    });
+    var correct = ch.length === answer.length && ch.every(function (c) { return answer.indexOf(c) !== -1; });
+    var j = sec.querySelector('.judge');
+    j.textContent = correct ? '✓ 答对' : '✗ 答错';
+    j.className = correct ? 'ok' : 'bad';
+    sec.querySelector('[data-reveal]').classList.add('show');
+    return correct;
+  }
+
+  document.querySelectorAll('.opt input').forEach(function (input) {
+    input.addEventListener('change', function () {
+      if (toggle.checked) gradeQuestion(input.closest('.q'));
+    });
+  });
+
+  gradeBtn.addEventListener('click', function () {
+    var secs = document.querySelectorAll('.q');
+    var right = 0;
+    secs.forEach(function (sec) { if (gradeQuestion(sec)) right++; });
+    document.querySelectorAll('.opt input').forEach(function (i) { i.disabled = true; });
+    scoreEl.innerHTML = '<b>得分：' + right + ' / ' + secs.length + '</b>';
+  });
+})();
+</script>
+</body>
+</html>
