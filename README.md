@@ -13,6 +13,23 @@
 - **Misconception Memory**：错因按 KC × 错因 × 触发条件长期记忆，修复走"归因 → 策略 → 双轨重测（原题二刷 + 迁移验证）"。
 - **AI 出题四道闸门**：Generator → 盲解 Solver → 对抗 Reviewer → 机械验证，`validate_question.py` 强制把关。
 
+## V2：一站式刷题与多形态输出
+- **KC 中英对照显示**：所有面向用户的输出统一用 `kc_id（中文名）`（如 `feedback_topology（反馈组态判断）`），贯穿 next-step / dashboard / evidence / misconception。
+- **一条命令刷题**（`scripts/drill.py`）：选好模式与题量即出题，自动凑题、缺口检测、并给出下一步建议。
+  - 模式：`--mode syllabus`（按考纲权重直出）/ `--mode diagnostic`（按弱点自适应）
+  - 题量：`--count 5|10|...`，每 KC 题数 `--per-kc`，确定性种子 `--seed`
+  - 形态：`--format html`（自包含可点击交互测验）/ `paper`（PDF 题目卷 + 答案解析卷）/ `md`
+  - 网页版「点击显示解析」默认开关：`--reveal-default on|off`（学生也可在页面内随时切换）
+- **PDF 试卷**：内置 CID 字体回退，免装中文字体即可出卷（`render_paper.py`）。
+
+```bash
+# 考纲直出 10 题，生成交互测验页（默认开「点击显示解析」）
+python3 scripts/drill.py --mode syllabus --count 10 --format html
+
+# 诊断先行：按弱点自适应出 5 题，出 PDF 试卷（题目卷 + 答案解析卷）
+python3 scripts/drill.py --mode diagnostic --count 5 --format paper
+```
+
 ## 安装（Claude Code）
 ```bash
 git clone <this-repo> ~/.claude/skills/study-loop
@@ -36,11 +53,12 @@ cat .study/dashboard.md
 
 ## 目录
 - `SKILL.md` 主 Agent 路由；`references/` 完整规则；`agents/` 出题三卡；
-- `scripts/` CLI 与 studylib 核心库；`templates/` dashboard 模板；`tests/` 全量测试。
+- `scripts/` CLI 与 studylib 核心库；`templates/` dashboard 与测验模板；`tests/` 全量测试。
 
-## V1 边界（Roadmap）
-未实现（按 spec P1-P3 顺序推进）：MarkItDown 材料摄入、自适应诊断选题、HTML 交互测验
-attempt 导入、冲刺矩阵、考后回传校准、跨课程学习指纹、学科 profile 向量校正。
+## Roadmap
+**V2 已交付**：KC 中英对照显示、自适应诊断选题（drill `--mode diagnostic`）、HTML 交互测验 / PDF 试卷多形态输出。
+
+仍未实现（按 spec P1-P3 推进）：MarkItDown 材料摄入、attempt 批量导入、冲刺矩阵、考后回传校准、跨课程学习指纹、学科 profile 向量校正。
 
 ## License
 MIT

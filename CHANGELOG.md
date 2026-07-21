@@ -22,6 +22,11 @@
 
 ## [Unreleased]
 
+### 2026-07-21 — `docs` — README 同步到 V2
+- 新增「V2：一站式刷题与多形态输出」小节：KC 中英对照显示、`drill.py` 一条命令（`syllabus`/`diagnostic` × `html`/`paper`/`md`）、「点击显示解析」开关、PDF CID 字体回退。
+- Roadmap 更新：自适应诊断选题、HTML 交互测验 / PDF 试卷标记为 V2 已交付，移出未实现清单。
+- 涉及：`README.md`。
+
 ### 2026-07-21 — `docs` — CLAUDE.md 新增两条工作纪律
 - 功能版本更新必须同步 `README.md`（与 `CHANGELOG.md` 带版本号小节对应），避免 README 与实际能力脱节。
 - 所有更新备注（`git commit` message / `CHANGELOG.md`）一律用中文；代码、标识符、命令仍用英文。
