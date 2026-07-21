@@ -22,12 +22,18 @@
 
 ## [Unreleased]
 
+_暂无待发布条目。_
+
+## [V2.0-rc1] - 2026-07-20
+
+### 2026-07-21 — `chore` — V2 功能合并入 main 主干（e1e3825）
+- 将 `feat/v2-display-drill-output`（F1 / F2 / F3，14 commits）以 `--no-ff` 合并入 `main`；全量 `pytest` 100 passed。
+- 合并后同步推送 `origin/main`。涉及命令：`git merge --no-ff` / `git push origin main`。
+
 ### 2026-07-20 — `feat` — F2 学习模式引擎 + 一站式 drill 命令
 - 新增 `studylib.drill`：`select_kcs`（考纲加权 / 诊断自适应，seed 确定性）、`gather_questions`（凑题 + 缺口检测）。
 - 新增 CLI `scripts/drill.py`：选题→凑题→manifest→渲染（html/paper/md），打印 KC 标签、缺口、下一步建议。
 - `SKILL.md` 路由表新增「刷题/出题/模拟卷」意图（先问模式/题量/形态再出）。
-
-## [V2.0-rc1] - 2026-07-20
 
 ### 2026-07-20 — `feat` — F3 选择题输出（网页 / PDF 试卷）
 - 新增 `studylib.manifest`（drill manifest 契约）、`studylib.render_html` + `templates/quiz.html.j2`（自包含交互测验页，运行时解析开关）、`studylib.render_paper`（manifest→PDF，支持题目卷/答案解析卷，CID 字体回退免装字体）。
