@@ -15,6 +15,10 @@ study-loop 是一个**本地优先、事件溯源**的持续学习 Agent（Claud
 日期 + 类型（`feat`/`fix`/`refactor`/`docs`/`chore`）+ 一句话摘要 + 涉及文件/命令 + 对应 commit 短哈希。
 功能交付后，把对应条目从 `[Unreleased]` 归入带日期版本号的小节。**不要跳过这一步。**
 
+**功能版本更新必须同步 `README.md`**：凡涉及用户可感知的新功能或新版本（与 `CHANGELOG.md` 中带版本号的小节对应），必须同步更新 `README.md` 的功能说明与使用方式，避免 README 与实际能力脱节。**不要跳过这一步。**
+
+**所有更新备注一律用中文**：`git commit` message、`CHANGELOG.md` 记录等面向人阅读的更新说明都用中文书写；代码、标识符、命令、文件名仍用英文。
+
 ## 架构铁律（不可违反）
 
 1. **事件溯源**：`events.jsonl` 是唯一真相源。`.study/` 下的 `state.json` 只是快照。

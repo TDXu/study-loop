@@ -22,7 +22,10 @@
 
 ## [Unreleased]
 
-_暂无待发布条目。_
+### 2026-07-21 — `docs` — CLAUDE.md 新增两条工作纪律
+- 功能版本更新必须同步 `README.md`（与 `CHANGELOG.md` 带版本号小节对应），避免 README 与实际能力脱节。
+- 所有更新备注（`git commit` message / `CHANGELOG.md`）一律用中文；代码、标识符、命令仍用英文。
+- 涉及：`CLAUDE.md`「变更纪律（重要）」小节。
 
 ## [V2.0-rc1] - 2026-07-20
 
