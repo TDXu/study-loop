@@ -22,6 +22,11 @@
 
 ## [Unreleased]
 
+### 2026-07-22 — `docs` — README 新增版本发布历史，重写 Roadmap
+- 新增「版本发布历史」：V1（2026-07-15 核心学习闭环）与 V2（2026-07-20 display / drill / output）的发布清单。
+- 重写 Roadmap：下一步计划（材料摄入、完整自适应诊断、attempt 回传、考后校准、跨课程指纹、冲刺矩阵、profile 校正）+ V1.1 工程硬化项 + 非目标。
+- 涉及：`README.md`。
+
 ### 2026-07-21 — `docs` — README 同步到 V2
 - 新增「V2：一站式刷题与多形态输出」小节：KC 中英对照显示、`drill.py` 一条命令（`syllabus`/`diagnostic` × `html`/`paper`/`md`）、「点击显示解析」开关、PDF CID 字体回退。
 - Roadmap 更新：自适应诊断选题、HTML 交互测验 / PDF 试卷标记为 V2 已交付，移出未实现清单。

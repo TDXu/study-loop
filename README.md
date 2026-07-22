@@ -55,10 +55,37 @@ cat .study/dashboard.md
 - `SKILL.md` 主 Agent 路由；`references/` 完整规则；`agents/` 出题三卡；
 - `scripts/` CLI 与 studylib 核心库；`templates/` dashboard 与测验模板；`tests/` 全量测试。
 
-## Roadmap
-**V2 已交付**：KC 中英对照显示、自适应诊断选题（drill `--mode diagnostic`）、HTML 交互测验 / PDF 试卷多形态输出。
+## 版本发布历史
 
-仍未实现（按 spec P1-P3 推进）：MarkItDown 材料摄入、attempt 批量导入、冲刺矩阵、考后回传校准、跨课程学习指纹、学科 profile 向量校正。
+### V2（2026-07-20，[V2.0-rc1]）— display / drill / output
+- **F1 KC 中英对照显示**：`kc_label` 统一 `kc_id（中文名）`，接入 next-step / dashboard / evidence / misconception。
+- **F2 学习模式引擎 + 一站式 drill**：`select_kcs`（考纲加权 / 诊断自适应，seed 确定性）+ `gather_questions`（凑题 + 缺口检测）；`scripts/drill.py` 一条命令贯通 选题→凑题→manifest→渲染。
+- **F3 选择题输出**：自包含交互测验页（运行时「点击显示解析」开关）+ PDF 试卷渲染（题目卷/答案解析卷，CID 字体回退免装字体）；移除旧 `md_to_pdf.py`。
+- 用法详见上方「V2：一站式刷题与多形态输出」。14 commits 合入 main，pytest 100 passed。
+
+### V1（2026-07-15）— 核心学习闭环
+- **架构基础**：事件溯源（`events.jsonl` 唯一真相）+ 原子写 / 课程锁 + append-only 去重 + 课程工作区 / 全局注册表 + Schema 版本控制。
+- **核心差异化**：六态教学状态、学习证据图谱、错因记忆（三步归因 + 双轨重测）、答题前置信度 + Blind Spot Score、提示阶梯 L0–L5、迁移阶梯 T0–T4、FSRS 确定性重放。
+- **题目质量**：AI 出题四道闸门（Generator → 盲解 Solver → 对抗 Reviewer → 机械验证）。
+- **CLI 门面**：11 个 Typer 脚本，统一锁 + 事件 + 自动派生，错误友好化。
+- **文档**：SKILL.md 路由 + references 规则 + agents 出题三卡 + demo 端到端。验收 65/65 测试通过，终审 Ready。
+
+## Roadmap
+
+### 下一步计划（规格 P2/P3，尚未实现）
+- **材料摄入管线**（`ingest.py` / MarkItDown）：课件 / 教材自动转文本并注册 KC，把闭环从"手工驱动"升级为"材料驱动"。
+- **完整自适应诊断**（`diagnose.py`，自评全图 + 抽测校准）：V2 的 drill `--mode diagnostic` 仅做"按弱点自适应选题"，完整诊断引擎尚未实现。
+- **HTML 作答回传导入**（`import_attempt.py`）：V2 已能生成 quiz.html，但学生作答后自动回传 attempt 尚未实现。
+- **考后回传与校准**（`exam_feedback.py`）：用真实考试结果反向修正 next-best-step 权重。
+- **跨课程学习指纹**（`learning-fingerprint.json`）：跨课程稳定的行为模式。
+- **冲刺矩阵**（`sprint-policy.md`）：剩余时间 × 准备度的考前冲刺调度（现为占位）。
+- **学科 profile 向量校正**：V1 用混合向量，按学科自适应校正尚未实现（`references/profiles/` 占位）。
+
+### 工程硬化（V1.1 延期项，非阻塞）
+- 已解决的错因复发重新激活；证据 / 卡片按解析时间排序（防混合时区）；`build_questions` 防御性拷贝；`kc_updated` 的 exam_weight `float()` 强转；空 `kc_ids` / 未知 `error_id` 校验；无锁读路径的读时写竞争。
+
+### 非目标（规格明确）
+- 多用户、云同步、GUI。
 
 ## License
 MIT
