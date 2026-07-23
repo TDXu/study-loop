@@ -161,6 +161,7 @@ study-loop/
 
 - V1：事件溯源、六态教学状态、证据图谱、错因记忆、迁移验证、FSRS 和 `/study` 路由。
 - V2：KC 中英对照、一站式 `drill`、HTML 交互测验、PDF 试卷和多形态输出。
+- V3：README 顶部海报与导航优化、双语项目文档、Agent 新手引导协议，以及贡献、安全、Issue、PR 和 CI 协作入口。
 
 ### Roadmap
 

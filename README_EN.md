@@ -148,6 +148,7 @@ study-loop/
 
 - V1: event sourcing, teaching states, evidence graph, misconception memory, transfer validation, FSRS, and `/study` routing.
 - V2: bilingual KC labels, one-command drills, interactive HTML quizzes, PDF papers, and multiple output formats.
+- V3: a redesigned README with a banner and navigation, bilingual project documentation, guided Agent onboarding, and contribution, security, issue, pull-request, and CI collaboration entry points.
 
 ### Roadmap
 

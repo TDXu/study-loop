@@ -22,6 +22,10 @@
 
 ## [Unreleased]
 
+### 2026-07-23 — `docs` — 新增 V3 项目文档与 Agent 引导版本说明
+- 在中英文 README 的版本能力列表中保留 V1/V2，并新增 V3：README 视觉与导航、双语文档、Agent 新手引导协议，以及贡献、安全、Issue、PR 和 CI 入口。
+- 涉及：`README.md`、`README_EN.md`、`CHANGELOG.md`。
+
 ### 2026-07-23 — `fix` — 修复符号链接安装下的 fsrs 循环导入
 - `studylib/__init__.py` 中把 `scripts/` 移到 `sys.path` 末尾的去重逻辑改为按 `realpath` 比较，并抽成可单独测试的 `_demote_scripts_dir`。
 - 原因：用符号链接安装（如 `~/.claude/skills/study-loop -> 仓库/study-loop`）时，`sys.path` 存的是符号链接形态，而 `Path(__file__).resolve()` 会跟随软链得到真实路径，两者字符串不等 → 去重空转 → `scripts/fsrs.py` 遮蔽 `fsrs` pip 包 → `fsrs_store.py` 的 `from fsrs import ...` 触发循环导入，`next_step.py` 等所有 CLI 无法启动。
