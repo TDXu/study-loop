@@ -22,6 +22,12 @@
 
 ## [Unreleased]
 
+### 2026-07-23 — `fix` — 修复符号链接安装下的 fsrs 循环导入
+- `studylib/__init__.py` 中把 `scripts/` 移到 `sys.path` 末尾的去重逻辑改为按 `realpath` 比较，并抽成可单独测试的 `_demote_scripts_dir`。
+- 原因：用符号链接安装（如 `~/.claude/skills/study-loop -> 仓库/study-loop`）时，`sys.path` 存的是符号链接形态，而 `Path(__file__).resolve()` 会跟随软链得到真实路径，两者字符串不等 → 去重空转 → `scripts/fsrs.py` 遮蔽 `fsrs` pip 包 → `fsrs_store.py` 的 `from fsrs import ...` 触发循环导入，`next_step.py` 等所有 CLI 无法启动。
+- 新增 `tests/test_path_dedup.py`，锁定符号链接形态下的去重行为，且不依赖磁盘上存在真实软链（跨平台）。
+- 涉及：`scripts/studylib/__init__.py`、`tests/test_path_dedup.py`。
+
 ### 2026-07-23 — `docs` — 增加 Agent 新手引导协议
 - `SKILL.md` 新增单问题开场分流、分支逐步追问和空状态解释规则。
 - `docs/USAGE.md` 增加新手对话示例，README 中同步“先分流，再执行”的入口说明。
