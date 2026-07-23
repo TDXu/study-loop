@@ -22,6 +22,27 @@
 
 ## [Unreleased]
 
+### 2026-07-23 — `docs` — 新增 V3 项目文档与 Agent 引导版本说明
+- 在中英文 README 的版本能力列表中保留 V1/V2，并新增 V3：README 视觉与导航、双语文档、Agent 新手引导协议，以及贡献、安全、Issue、PR 和 CI 入口。
+- 涉及：`README.md`、`README_EN.md`、`CHANGELOG.md`。
+
+### 2026-07-23 — `fix` — 修复符号链接安装下的 fsrs 循环导入
+- `studylib/__init__.py` 中把 `scripts/` 移到 `sys.path` 末尾的去重逻辑改为按 `realpath` 比较，并抽成可单独测试的 `_demote_scripts_dir`。
+- 原因：用符号链接安装（如 `~/.claude/skills/study-loop -> 仓库/study-loop`）时，`sys.path` 存的是符号链接形态，而 `Path(__file__).resolve()` 会跟随软链得到真实路径，两者字符串不等 → 去重空转 → `scripts/fsrs.py` 遮蔽 `fsrs` pip 包 → `fsrs_store.py` 的 `from fsrs import ...` 触发循环导入，`next_step.py` 等所有 CLI 无法启动。
+- 新增 `tests/test_path_dedup.py`，锁定符号链接形态下的去重行为，且不依赖磁盘上存在真实软链（跨平台）。
+- 涉及：`scripts/studylib/__init__.py`、`tests/test_path_dedup.py`。
+
+### 2026-07-23 — `docs` — 增加 Agent 新手引导协议
+- `SKILL.md` 新增单问题开场分流、分支逐步追问和空状态解释规则。
+- `docs/USAGE.md` 增加新手对话示例，README 中同步“先分流，再执行”的入口说明。
+- `tests/test_docs.py` 增加 Agent 引导契约检查，防止后续删除关键规则。
+
+### 2026-07-23 — `docs` / `chore` — 重构项目首页并补齐开源协作入口
+- 重做 `README.md`，新增横幅、快速开始、能力索引、架构流程、Roadmap 和文档导航。
+- 新增 `README_EN.md`、`assets/readme-banner.svg`、`CONTRIBUTING.md`、`SECURITY.md` 和 MIT `LICENSE`。
+- 新增 GitHub Actions 测试工作流、Issue 模板和 Pull Request 模板。
+- 涉及：`README.md` `README_EN.md` `assets/` `.github/` `CONTRIBUTING.md` `SECURITY.md` `LICENSE`。
+
 ### 2026-07-22 — `docs` — README 新增版本发布历史，重写 Roadmap
 - 新增「版本发布历史」：V1（2026-07-15 核心学习闭环）与 V2（2026-07-20 display / drill / output）的发布清单。
 - 重写 Roadmap：下一步计划（材料摄入、完整自适应诊断、attempt 回传、考后校准、跨课程指纹、冲刺矩阵、profile 校正）+ V1.1 工程硬化项 + 非目标。

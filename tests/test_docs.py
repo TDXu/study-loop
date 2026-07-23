@@ -39,3 +39,25 @@ def test_reference_and_agent_files_exist_nonempty():
 def test_readme_has_quickstart():
     text = (ROOT / "README.md").read_text(encoding="utf-8")
     assert "init_course.py" in text and "Quick" in text or "快速" in text
+
+
+def test_skill_guided_onboarding_contract():
+    text = (ROOT / "SKILL.md").read_text(encoding="utf-8")
+    required = [
+        "每轮最多问一个问题",
+        "你今天想做哪件事？",
+        "用户已经明确说明目标时，直接路由",
+        "不循环追问",
+        "没有课程",
+        "没有 KC",
+        "没有到期卡",
+    ]
+    for phrase in required:
+        assert phrase in text, f"SKILL.md 缺少引导契约：{phrase}"
+
+
+def test_readmes_show_guided_onboarding():
+    zh = (ROOT / "README.md").read_text(encoding="utf-8")
+    en = (ROOT / "README_EN.md").read_text(encoding="utf-8")
+    assert "先分流，再执行" in zh
+    assert "route the intent before executing" in en

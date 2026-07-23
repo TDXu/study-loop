@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 380" role="img" aria-labelledby="title desc">
+  <title id="title">study-loop：证据驱动的长期学习</title>
+  <desc id="desc">study-loop 面向长期掌握的证据驱动学习 Agent，包含知识节点、复习卡片和下一步建议。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#08152f"/>
+      <stop offset="0.58" stop-color="#102954"/>
+      <stop offset="1" stop-color="#0b4d61"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#62e6d4" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#62e6d4" stop-opacity=".9"/>
+      <stop offset="1" stop-color="#f3b562" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="blur"><feGaussianBlur stdDeviation="18"/></filter>
+    <filter id="soft"><feGaussianBlur stdDeviation="5"/></filter>
+  </defs>
+  <rect width="1200" height="380" rx="28" fill="url(#bg)"/>
+  <circle cx="1030" cy="60" r="130" fill="#32c7c4" opacity=".13" filter="url(#blur)"/>
+  <circle cx="210" cy="330" r="120" fill="#3974ff" opacity=".16" filter="url(#blur)"/>
+  <path d="M0 300 C220 250 280 345 470 292 S790 178 1200 245" fill="none" stroke="url(#glow)" stroke-width="2" opacity=".72"/>
+  <path d="M0 318 C230 267 305 358 492 308 S810 205 1200 265" fill="none" stroke="#62e6d4" stroke-width="1" opacity=".22"/>
+
+  <g transform="translate(78 82)">
+    <text x="0" y="58" fill="#f7fbff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="58" font-weight="750" letter-spacing="-2">study-loop</text>
+    <rect x="3" y="82" width="300" height="4" rx="2" fill="#62e6d4"/>
+    <text x="0" y="128" fill="#d6e9f1" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="21">面向长期掌握的证据驱动学习 Agent</text>
+    <text x="0" y="164" fill="#9fc2d2" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="16">错因记忆 · 间隔复习 · 迁移验证 · 下一步建议</text>
+  </g>
+
+  <g transform="translate(690 54)">
+    <path d="M72 126 C130 50 240 38 313 98 C378 151 360 238 291 270 C214 306 106 280 67 213 C49 182 49 153 72 126Z" fill="none" stroke="#62e6d4" stroke-width="2" opacity=".45"/>
+    <path d="M100 118 C153 71 224 66 275 101" fill="none" stroke="#f3b562" stroke-width="5" stroke-linecap="round" opacity=".8"/>
+    <path d="M285 105 C334 147 332 208 296 240" fill="none" stroke="#62e6d4" stroke-width="5" stroke-linecap="round" opacity=".8"/>
+    <path d="M284 240 C224 282 151 275 110 239" fill="none" stroke="#3974ff" stroke-width="5" stroke-linecap="round" opacity=".8"/>
+    <circle cx="192" cy="171" r="50" fill="#0b2348" stroke="#62e6d4" stroke-width="2"/>
+    <circle cx="192" cy="171" r="37" fill="none" stroke="#62e6d4" stroke-width="2" opacity=".65"/>
+    <path d="M192 146v27l19 13" fill="none" stroke="#f7fbff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="192" cy="171" r="5" fill="#f3b562"/>
+
+    <g transform="translate(0 20)">
+      <rect width="108" height="70" rx="12" fill="#102d55" stroke="#62e6d4" stroke-opacity=".65"/>
+      <rect x="14" y="15" width="48" height="7" rx="3" fill="#62e6d4" opacity=".8"/>
+      <rect x="14" y="32" width="78" height="6" rx="3" fill="#7ca7bb" opacity=".65"/>
+      <rect x="14" y="48" width="60" height="6" rx="3" fill="#7ca7bb" opacity=".4"/>
+      <circle cx="89" cy="19" r="7" fill="#f3b562"/>
+    </g>
+    <g transform="translate(265 125)">
+      <rect width="110" height="73" rx="12" fill="#102d55" stroke="#3974ff" stroke-opacity=".85"/>
+      <path d="M18 48 L39 32 L57 41 L84 18" fill="none" stroke="#62e6d4" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="18" cy="48" r="4" fill="#f7fbff"/><circle cx="39" cy="32" r="4" fill="#f7fbff"/><circle cx="57" cy="41" r="4" fill="#f7fbff"/><circle cx="84" cy="18" r="4" fill="#f7fbff"/>
+      <rect x="16" y="56" width="68" height="5" rx="2" fill="#7ca7bb" opacity=".5"/>
+    </g>
+    <g transform="translate(30 234)">
+      <rect width="116" height="70" rx="12" fill="#102d55" stroke="#f3b562" stroke-opacity=".8"/>
+      <circle cx="23" cy="25" r="9" fill="#f3b562" opacity=".9"/>
+      <path d="M20 25l3 3 6-8" fill="none" stroke="#102d55" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="42" y="20" width="55" height="6" rx="3" fill="#f7fbff" opacity=".75"/>
+      <rect x="42" y="38" width="44" height="6" rx="3" fill="#7ca7bb" opacity=".55"/>
+    </g>
+
+    <g fill="#62e6d4">
+      <circle cx="72" cy="126" r="7"/><circle cx="313" cy="98" r="7"/><circle cx="291" cy="270" r="7"/><circle cx="67" cy="213" r="7"/>
+    </g>
+    <g stroke="#62e6d4" stroke-width="1.5" opacity=".5">
+      <path d="M72 126 L108 90"/><path d="M313 98 L320 125"/><path d="M291 270 L268 238"/><path d="M67 213 L112 254"/>
+    </g>
+  </g>
+  <rect x="32" y="32" width="1136" height="316" rx="22" fill="none" stroke="#9cd9e1" stroke-opacity=".18"/>
+</svg>
