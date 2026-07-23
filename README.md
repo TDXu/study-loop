@@ -1,6 +1,6 @@
 <div align="center">
   <p>
-    <img src="assets/readme-banner.svg" alt="study-loop：面向长期掌握的证据驱动学习 Agent" width="100%">
+    <img src="assets/readme-banner-zh.svg" alt="study-loop：面向长期掌握的证据驱动学习 Agent" width="100%">
   </p>
   <p>
     <a href="https://github.com/monkeydyt/study-loop/actions/workflows/test.yml"><img alt="Tests" src="https://github.com/monkeydyt/study-loop/actions/workflows/test.yml/badge.svg"></a>

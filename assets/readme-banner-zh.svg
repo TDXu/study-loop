@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 380" role="img" aria-labelledby="title desc">
-  <title id="title">study-loop</title>
-  <desc id="desc">Evidence-driven learning loop with knowledge nodes, review cards and next-step guidance.</desc>
+  <title id="title">study-loop：证据驱动的长期学习</title>
+  <desc id="desc">study-loop 面向长期掌握的证据驱动学习 Agent，包含知识节点、复习卡片和下一步建议。</desc>
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#08152f"/>
@@ -24,8 +24,8 @@
   <g transform="translate(78 82)">
     <text x="0" y="58" fill="#f7fbff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="58" font-weight="750" letter-spacing="-2">study-loop</text>
     <rect x="3" y="82" width="300" height="4" rx="2" fill="#62e6d4"/>
-    <text x="0" y="128" fill="#d6e9f1" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="21">Evidence-driven learning for long-term mastery</text>
-    <text x="0" y="164" fill="#9fc2d2" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="16">Misconception memory · spaced review · transfer checks · next step</text>
+    <text x="0" y="128" fill="#d6e9f1" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="21">面向长期掌握的证据驱动学习 Agent</text>
+    <text x="0" y="164" fill="#9fc2d2" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="16">错因记忆 · 间隔复习 · 迁移验证 · 下一步建议</text>
   </g>
 
   <g transform="translate(690 54)">
