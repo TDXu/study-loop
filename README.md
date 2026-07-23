@@ -1,91 +1,199 @@
-# study-loop
+<div align="center">
+  <p>
+    <img src="assets/readme-banner.svg" alt="study-loop：面向长期掌握的证据驱动学习 Agent" width="100%">
+  </p>
+  <p>
+    <a href="https://github.com/monkeydyt/study-loop/actions/workflows/test.yml"><img alt="Tests" src="https://github.com/monkeydyt/study-loop/actions/workflows/test.yml/badge.svg"></a>
+    <a href="https://github.com/monkeydyt/study-loop/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-2ea44f.svg"></a>
+    <img alt="Python" src="https://img.shields.io/badge/python-3.11%2B-3776AB.svg">
+    <a href="README_EN.md"><img alt="Language" src="https://img.shields.io/badge/language-中文%20%7C%20English-1f6feb.svg"></a>
+  </p>
+  <p>
+    <a href="#快速开始">快速开始</a> ·
+    <a href="docs/USAGE.md">使用手册</a> ·
+    <a href="#它解决什么问题">核心能力</a> ·
+    <a href="references/architecture.md">架构</a> ·
+    <a href="CONTRIBUTING.md">参与贡献</a> ·
+    <a href="README_EN.md">English</a>
+  </p>
+</div>
 
-面向大学课程的本地优先、长期有状态的持续学习 Agent（Claude Code Skill）。
+---
 
-它不只追踪你会不会，还追踪：为什么会错、在什么条件下会错、能否迁移、依赖多少提示、
-多久会忘，以及下一步最值得学什么。
+`study-loop` 是一个面向大学课程的本地优先、长期有状态的持续学习 Agent（Claude Code Skill）。它记录的不只是“答对没有”，还记录为什么会错、在什么条件下会错、能否迁移、依赖多少提示、多久会忘，以及下一步最值得学什么。
 
 > **Explanation is not evidence.** 听懂不是掌握证据，独立完成才是。
 
-## 核心机制
-- **事件溯源**：一切学习行为进 `events.jsonl`，状态由脚本派生，可随规则升级全量重建（`rebuild.py`）。
-- **六态教学状态** × **FSRS 间隔复习** × **迁移阶梯（T0~T4）** × **置信度校准**，四组证据独立建模。
-- **Misconception Memory**：错因按 KC × 错因 × 触发条件长期记忆，修复走"归因 → 策略 → 双轨重测（原题二刷 + 迁移验证）"。
-- **AI 出题四道闸门**：Generator → 盲解 Solver → 对抗 Reviewer → 机械验证，`validate_question.py` 强制把关。
+## 快速开始
 
-## V2：一站式刷题与多形态输出
-- **KC 中英对照显示**：所有面向用户的输出统一用 `kc_id（中文名）`（如 `feedback_topology（反馈组态判断）`），贯穿 next-step / dashboard / evidence / misconception。
-- **一条命令刷题**（`scripts/drill.py`）：选好模式与题量即出题，自动凑题、缺口检测、并给出下一步建议。
-  - 模式：`--mode syllabus`（按考纲权重直出）/ `--mode diagnostic`（按弱点自适应）
-  - 题量：`--count 5|10|...`，每 KC 题数 `--per-kc`，确定性种子 `--seed`
-  - 形态：`--format html`（自包含可点击交互测验）/ `paper`（PDF 题目卷 + 答案解析卷）/ `md`
-  - 网页版「点击显示解析」默认开关：`--reveal-default on|off`（学生也可在页面内随时切换）
-- **PDF 试卷**：内置 CID 字体回退，免装中文字体即可出卷（`render_paper.py`）。
+### 安装
+
+需要 Python 3.11+。在 macOS/Linux 使用 `python3`，Windows 可将命令中的 `python3` 换成 `python`。
 
 ```bash
-# 考纲直出 10 题，生成交互测验页（默认开「点击显示解析」）
+git clone https://github.com/monkeydyt/study-loop.git
+cd study-loop
+python3 -m pip install -r requirements.txt
+python3 -m pytest
+```
+
+在 Claude Code 中将仓库放入 Skill 目录：
+
+```bash
+ln -s "$(pwd)" ~/.claude/skills/study-loop
+```
+
+Windows 用户可以直接复制仓库目录到 `%USERPROFILE%\.claude\skills\study-loop`，或使用 Git Bash/WSL 执行上面的软链接命令。
+
+### 第一次使用
+
+```bash
+python3 scripts/init_course.py ~/courses/模拟电子技术 \
+  --course-id analog-electronics \
+  --name "模拟电子技术" \
+  --exam-date 2026-07-25
+```
+
+然后进入课程目录，在 Claude Code 中说：
+
+```text
+/study
+```
+
+或者直接说：
+
+```text
+帮我复习模拟电子技术，先告诉我今天最值得做什么。
+```
+
+### 运行端到端 Demo
+
+```bash
+bash demo/demo.sh
+```
+
+Demo 会创建临时课程，演示注册知识点、答错、错因归因、修复、迁移重测、FSRS 和 next-best-step。不会修改你的真实课程目录。
+
+## 它解决什么问题
+
+传统学习助手通常只记录“做过什么”。`study-loop` 试图回答更有用的问题：
+
+| 问题 | study-loop 的做法 |
+|---|---|
+| 我今天该学什么？ | 根据当前状态、考试日期、风险和到期卡推荐 next-best-step。 |
+| 我为什么会错？ | 记录错误假设、缺失前提、错因类型和触发条件。 |
+| 我是真的掌握了吗？ | 区分 explained、practiced、checked、confirmed、weak、blocked 等状态。 |
+| 我会不会换个题型就又错？ | 通过 T0–T4 迁移阶梯和原题二刷验证。 |
+| 过几天会不会忘？ | 使用 FSRS 对复习卡进行间隔调度。 |
+
+## 核心能力
+
+- **事件溯源**：学习行为写入 `events.jsonl`，状态由脚本派生，可按规则升级全量重建。
+- **六态教学状态**：解释、练习、独立验证、迁移、薄弱点和前置阻塞分开建模。
+- **错因记忆**：按 KC × 错因 × 触发条件长期记忆，修复要求原题二刷和迁移验证。
+- **AI 出题四道闸门**：Generator → 盲解 Solver → 对抗 Reviewer → 机械验证。
+- **一站式刷题**：`drill.py` 支持考纲直出和诊断先行，并输出 HTML、PDF 或 Markdown。
+- **本地优先**：课程状态保存在本地工作区，`events.jsonl` 是事实来源，避免把学习状态交给不可见的模型记忆。
+
+## 你可以直接这样说
+
+| 想做什么 | 示例请求 |
+|---|---|
+| 开始学习 | `继续学习，告诉我今天最值得做的一件事。` |
+| 按考纲刷题 | `按考纲给我出 10 道题，生成可点击的网页测验。` |
+| 诊断弱点 | `先根据我的错题诊断薄弱知识点，再出 5 道题。` |
+| 修复错题 | `带我分析这道题为什么错，并安排原题二刷和迁移验证。` |
+| 查看状态 | `展示当前课程的掌握证据、错因和到期复习卡。` |
+
+不确定从哪里开始时，直接说“帮我学习”；Agent 会先检查状态，再**先分流，再执行**。
+
+## 工作方式
+
+```text
+用户请求
+   ↓
+SKILL.md 路由意图
+   ↓
+Python CLI 写入事件
+   ↓
+events.jsonl（唯一事实来源）
+   ↓
+派生状态 / FSRS / 错因记忆 / next-best-step
+   ↓
+Dashboard / HTML 测验 / PDF 试卷 / 对话建议
+```
+
+主 Agent 负责理解意图和解释结果；脚本负责确定性计算、状态升级、事件写入和题目验证。任何状态写入都应通过 `scripts/` 下的 CLI，不能直接编辑课程 `.study/` 文件。
+
+## 多形态输出
+
+```bash
+# 按考纲直出 10 题，生成交互测验页
 python3 scripts/drill.py --mode syllabus --count 10 --format html
 
-# 诊断先行：按弱点自适应出 5 题，出 PDF 试卷（题目卷 + 答案解析卷）
+# 按弱点自适应选 5 题，生成题目卷和答案解析卷
 python3 scripts/drill.py --mode diagnostic --count 5 --format paper
 ```
 
-## 安装（Claude Code）
-```bash
-git clone <this-repo> ~/.claude/skills/study-loop
-python3 -m pip install -r ~/.claude/skills/study-loop/requirements.txt
+网页测验支持运行时切换“点击显示解析”；PDF 输出带中文字体回退，可直接生成题目卷和答案解析卷。
+
+## 仓库结构
+
+```text
+study-loop/
+├── README.md                  # 中文项目首页
+├── README_EN.md               # English project overview
+├── SKILL.md                   # 主 Agent 路由与铁律
+├── agents/                    # 出题三卡：Generator / Solver / Reviewer
+├── references/                # 架构、证据、FSRS、迁移和错因规则
+├── scripts/                   # CLI 入口与 studylib 核心库
+├── templates/                 # Dashboard 与 HTML 测验模板
+├── demo/                      # 端到端演示
+├── tests/                     # pytest 测试
+├── docs/                      # 使用手册和交付报告
+├── assets/                    # README 视觉资产
+└── .github/                   # CI、Issue 和 PR 模板
 ```
 
-## Quick Start（也可手动跑 CLI）
+## 已实现与 Roadmap
+
+### 已实现
+
+- V1：事件溯源、六态教学状态、证据图谱、错因记忆、迁移验证、FSRS 和 `/study` 路由。
+- V2：KC 中英对照、一站式 `drill`、HTML 交互测验、PDF 试卷和多形态输出。
+
+### Roadmap
+
+- 材料摄入管线：从课件/教材自动转文本并注册 KC。
+- 完整自适应诊断：自评全图加抽测校准。
+- HTML 作答回传：将网页作答结果导入 `attempt` 事件。
+- 考后回传与跨课程学习指纹。
+
+明确非目标：多用户、云同步和完整 GUI。
+
+详细限制见 [`docs/DELIVERY-REPORT.md`](docs/DELIVERY-REPORT.md)。
+
+## 测试
+
 ```bash
-python3 scripts/init_course.py ~/courses/模电 --course-id analog --name 模拟电子技术 --exam-date 2026-07-25
-cd ~/courses/模电
-python3 <skill>/scripts/event.py kc-add --kc-id feedback_topology --name 反馈组态判断 --exam-weight 0.9
-python3 <skill>/scripts/validate_question.py q.json          # 注册真题
-python3 <skill>/scripts/event.py attempt --question-id past_2023_q17 --wrong --confidence 0.9
-python3 <skill>/scripts/event.py misconception --error-id err_001 --kc feedback_topology \
-  --question past_2023_q17 --wrong-assumption "有反馈连接即电压反馈" \
-  --missing-premise "必须检查取样方式" --error-type concept_misconception
-python3 <skill>/scripts/next_step.py                          # → 建议 repair，并解释为什么
-cat .study/dashboard.md
+python3 -m pytest
+git diff --check
 ```
-在 Claude Code 中直接说 `/study` 或"帮我复习模电"。
 
-## 目录
-- `SKILL.md` 主 Agent 路由；`references/` 完整规则；`agents/` 出题三卡；
-- `scripts/` CLI 与 studylib 核心库；`templates/` dashboard 与测验模板；`tests/` 全量测试。
+GitHub Actions 会在 push 和 Pull Request 时自动运行测试。开发协作规则见 [`CONTRIBUTING.md`](CONTRIBUTING.md)。
 
-## 版本发布历史
+## 文档入口
 
-### V2（2026-07-20，[V2.0-rc1]）— display / drill / output
-- **F1 KC 中英对照显示**：`kc_label` 统一 `kc_id（中文名）`，接入 next-step / dashboard / evidence / misconception。
-- **F2 学习模式引擎 + 一站式 drill**：`select_kcs`（考纲加权 / 诊断自适应，seed 确定性）+ `gather_questions`（凑题 + 缺口检测）；`scripts/drill.py` 一条命令贯通 选题→凑题→manifest→渲染。
-- **F3 选择题输出**：自包含交互测验页（运行时「点击显示解析」开关）+ PDF 试卷渲染（题目卷/答案解析卷，CID 字体回退免装字体）；移除旧 `md_to_pdf.py`。
-- 用法详见上方「V2：一站式刷题与多形态输出」。14 commits 合入 main，pytest 100 passed。
+- [`docs/USAGE.md`](docs/USAGE.md)：面向学生的完整使用手册。
+- [`SKILL.md`](SKILL.md)：主 Agent 的路由和铁律。
+- [`references/architecture.md`](references/architecture.md)：事件源、派生状态和数据边界。
+- [`docs/DELIVERY-REPORT.md`](docs/DELIVERY-REPORT.md)：交付报告、测试覆盖和已知限制。
+- [`CHANGELOG.md`](CHANGELOG.md)：版本和变更记录。
 
-### V1（2026-07-15）— 核心学习闭环
-- **架构基础**：事件溯源（`events.jsonl` 唯一真相）+ 原子写 / 课程锁 + append-only 去重 + 课程工作区 / 全局注册表 + Schema 版本控制。
-- **核心差异化**：六态教学状态、学习证据图谱、错因记忆（三步归因 + 双轨重测）、答题前置信度 + Blind Spot Score、提示阶梯 L0–L5、迁移阶梯 T0–T4、FSRS 确定性重放。
-- **题目质量**：AI 出题四道闸门（Generator → 盲解 Solver → 对抗 Reviewer → 机械验证）。
-- **CLI 门面**：11 个 Typer 脚本，统一锁 + 事件 + 自动派生，错误友好化。
-- **文档**：SKILL.md 路由 + references 规则 + agents 出题三卡 + demo 端到端。验收 65/65 测试通过，终审 Ready。
+## 参与贡献
 
-## Roadmap
-
-### 下一步计划（规格 P2/P3，尚未实现）
-- **材料摄入管线**（`ingest.py` / MarkItDown）：课件 / 教材自动转文本并注册 KC，把闭环从"手工驱动"升级为"材料驱动"。
-- **完整自适应诊断**（`diagnose.py`，自评全图 + 抽测校准）：V2 的 drill `--mode diagnostic` 仅做"按弱点自适应选题"，完整诊断引擎尚未实现。
-- **HTML 作答回传导入**（`import_attempt.py`）：V2 已能生成 quiz.html，但学生作答后自动回传 attempt 尚未实现。
-- **考后回传与校准**（`exam_feedback.py`）：用真实考试结果反向修正 next-best-step 权重。
-- **跨课程学习指纹**（`learning-fingerprint.json`）：跨课程稳定的行为模式。
-- **冲刺矩阵**（`sprint-policy.md`）：剩余时间 × 准备度的考前冲刺调度（现为占位）。
-- **学科 profile 向量校正**：V1 用混合向量，按学科自适应校正尚未实现（`references/profiles/` 占位）。
-
-### 工程硬化（V1.1 延期项，非阻塞）
-- 已解决的错因复发重新激活；证据 / 卡片按解析时间排序（防混合时区）；`build_questions` 防御性拷贝；`kc_updated` 的 exam_weight `float()` 强转；空 `kc_ids` / 未知 `error_id` 校验；无锁读路径的读时写竞争。
-
-### 非目标（规格明确）
-- 多用户、云同步、GUI。
+欢迎提交文档改进、Bug 修复和可验证的新能力。开始前请阅读 [`CONTRIBUTING.md`](CONTRIBUTING.md)。安全问题请阅读 [`SECURITY.md`](SECURITY.md)，不要直接公开发布敏感信息。
 
 ## License
-MIT
+
+MIT，见 [`LICENSE`](LICENSE)。

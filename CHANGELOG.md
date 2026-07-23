@@ -22,6 +22,17 @@
 
 ## [Unreleased]
 
+### 2026-07-23 — `docs` — 增加 Agent 新手引导协议
+- `SKILL.md` 新增单问题开场分流、分支逐步追问和空状态解释规则。
+- `docs/USAGE.md` 增加新手对话示例，README 中同步“先分流，再执行”的入口说明。
+- `tests/test_docs.py` 增加 Agent 引导契约检查，防止后续删除关键规则。
+
+### 2026-07-23 — `docs` / `chore` — 重构项目首页并补齐开源协作入口
+- 重做 `README.md`，新增横幅、快速开始、能力索引、架构流程、Roadmap 和文档导航。
+- 新增 `README_EN.md`、`assets/readme-banner.svg`、`CONTRIBUTING.md`、`SECURITY.md` 和 MIT `LICENSE`。
+- 新增 GitHub Actions 测试工作流、Issue 模板和 Pull Request 模板。
+- 涉及：`README.md` `README_EN.md` `assets/` `.github/` `CONTRIBUTING.md` `SECURITY.md` `LICENSE`。
+
 ### 2026-07-22 — `docs` — README 新增版本发布历史，重写 Roadmap
 - 新增「版本发布历史」：V1（2026-07-15 核心学习闭环）与 V2（2026-07-20 display / drill / output）的发布清单。
 - 重写 Roadmap：下一步计划（材料摄入、完整自适应诊断、attempt 回传、考后校准、跨课程指纹、冲刺矩阵、profile 校正）+ V1.1 工程硬化项 + 非目标。
