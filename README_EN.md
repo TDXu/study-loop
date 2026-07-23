@@ -20,7 +20,9 @@
 
 ---
 
-`study-loop` is a local-first, stateful learning agent for university courses. It tracks more than whether an answer was right: it records why you made a mistake, when the mistake appears, whether you can transfer the skill, how much help you needed, when you may forget it, and what to learn next.
+`study-loop` is a local-first, evidence-driven long-term learning agent for university courses (Claude Code Skill). Rather than a chat-style Q&A assistant, it chains **pre-study, study and practice, mistake and misconception repair, transfer validation, spaced review, exam-prep planning, and final-exam paper generation** into one continuous learning loop. Every answer, hint, mistake, and review becomes learning evidence; the agent uses it to judge knowledge state and dynamically schedule the next most valuable task.
+
+It does not treat “understanding an explanation” as mastery: explanation, independent work, misconception repair, and transfer validation are recorded separately.
 
 > **Explanation is not evidence.** Understanding a solution is not the same as proving mastery.
 
