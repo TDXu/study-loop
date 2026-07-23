@@ -22,6 +22,11 @@
 
 ## [Unreleased]
 
+### 2026-07-23 — `docs` — 优化 README 首屏定位与 GitHub About
+- 重写中英文 README 首屏介绍，统一用规范学习闭环表述：预习、学习与过程练习、错题与错因修复、知识迁移验证、间隔复习、考前计划、期末试卷生成；去掉首屏的 FSRS / HTML-PDF 等技术名词，突出“证据驱动学习闭环”与“动态下一步决策”。保留 V1/V2/V3 描述与核心标语「Explanation is not evidence.」。
+- 补充 GitHub 仓库 About：写入描述、留空 Website、新增 9 个 topics（ai-agent、claude-code、study-assistant、learning-science、spaced-repetition、fsrs、knowledge-tracing、education、python）。
+- 涉及：`README.md`、`README_EN.md`、`CHANGELOG.md`，以及 GitHub 仓库元信息（描述 / topics）。
+
 ### 2026-07-23 — `docs` — 新增 V3 项目文档与 Agent 引导版本说明
 - 在中英文 README 的版本能力列表中保留 V1/V2，并新增 V3：README 视觉与导航、双语文档、Agent 新手引导协议，以及贡献、安全、Issue、PR 和 CI 入口。
 - 涉及：`README.md`、`README_EN.md`、`CHANGELOG.md`。
